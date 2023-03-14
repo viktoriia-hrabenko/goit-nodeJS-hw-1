@@ -1,6 +1,5 @@
 const fs = require("fs").promises;
 const path = require("path");
-const uniqid = require("uniqid");
 const contactsPath = path.join(__dirname, "db", "contacts.json");
 
 async function listContacts() {
@@ -29,9 +28,11 @@ async function getContactById(contactId) {
 async function addContact(name, email, phone) {
   try {
     const data = await fs.readFile(contactsPath, "utf-8");
+    const contacts = JSON.parse(data);
+    const newIndex = Number(contacts[contacts.length - 1].id) + 1;
     const updateData = [
-      ...JSON.parse(data),
-      { id: uniqid(), name, email, phone },
+      ...contacts,
+      { id: `${newIndex}`, name, email, phone },
     ];
     fs.writeFile(contactsPath, JSON.stringify(updateData, null, 2));
     console.table(updateData);
